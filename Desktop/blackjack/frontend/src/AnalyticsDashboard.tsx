@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -9,9 +9,17 @@ import {
 const initialSessionData = [];
 
 function AnalyticsDashboard() {
-  const [sessionData, setSessionData] = useState(initialSessionData);
+  const [sessionData, setSessionData] = useState(() => {
+    const savedData = localStorage.getItem('blackjackSessionData');
+    return savedData ? JSON.parse(savedData) : [];
+  });
   const [newSession, setNewSession] = useState({ date: '', buyIn: '', cashout: '', roundsPlayed: '', roundsWon: '' });
   const [isTableVisible, setIsTableVisible] = useState(true);
+
+  // Save sessionData to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('blackjackSessionData', JSON.stringify(sessionData));
+  }, [sessionData]);
 
   const handleAddSession = () => {
     const { date, buyIn, cashout, roundsPlayed, roundsWon } = newSession;
@@ -58,11 +66,11 @@ function AnalyticsDashboard() {
               <input type="date" id="sessionDate" value={newSession.date} onChange={(e) => setNewSession({...newSession, date: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
             </div>
             <div>
-              <label htmlFor="buyIn" className="block text-sm font-medium text-gray-300 mb-1">Buy-in ($):</label>
+              <label htmlFor="buyIn" className="block text-sm font-medium text-gray-300 mb-1">Buy-in (₹):</label>
               <input type="number" id="buyIn" placeholder="e.g., 100" value={newSession.buyIn} onChange={(e) => setNewSession({...newSession, buyIn: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
             </div>
             <div>
-              <label htmlFor="cashout" className="block text-sm font-medium text-gray-300 mb-1">Cashout ($):</label>
+              <label htmlFor="cashout" className="block text-sm font-medium text-gray-300 mb-1">Cashout (₹):</label>
               <input type="number" id="cashout" placeholder="e.g., 150" value={newSession.cashout} onChange={(e) => setNewSession({...newSession, cashout: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
             </div>
             <div>
@@ -87,15 +95,15 @@ function AnalyticsDashboard() {
               <AreaChart data={sessionData}>
                 <defs>
                   <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#2E7D32" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#2E7D32" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="session" stroke="#E2E8F0" />
                 <YAxis stroke="#E2E8F0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
-                <Area type="monotone" dataKey="netProfit" stroke="#82ca9d" fillOpacity={1} fill="url(#colorProfit)" />
+                <Area type="monotone" dataKey="netProfit" stroke="#2E7D32" fillOpacity={1} fill="url(#colorProfit)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -109,8 +117,8 @@ function AnalyticsDashboard() {
                 <YAxis stroke="#E2E8F0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Bar dataKey="buyIn" fill="#a8dadc" name="Buy-in" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="cashout" fill="#82ca9d" name="Cashout" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="buyIn" fill="#1565C0" name="Buy-in" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="cashout" fill="#FF8F00" name="Cashout" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -124,7 +132,7 @@ function AnalyticsDashboard() {
                 <YAxis domain={[0, 1]} stroke="#E2E8F0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Line type="monotone" dataKey="winRate" stroke="#64b5f6" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="winRate" stroke="#D84315" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -138,7 +146,7 @@ function AnalyticsDashboard() {
                 <YAxis stroke="#E2E8F0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Bar dataKey="roundsPlayed" fill="#9c27b0" name="Rounds Played" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="roundsPlayed" fill="#6A1B9A" name="Rounds Played" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -171,10 +179,10 @@ function AnalyticsDashboard() {
                     <tr key={index}>
                       <td className="py-2 px-4 border-b border-gray-600">{s.date}</td>
                       <td className="py-2 px-4 border-b border-gray-600">{s.session}</td>
-                      <td className="py-2 px-4 border-b border-gray-600">${s.buyIn}</td>
-                      <td className="py-2 px-4 border-b border-gray-600">${s.cashout}</td>
+                      <td className="py-2 px-4 border-b border-gray-600">₹{s.buyIn}</td>
+                      <td className="py-2 px-4 border-b border-gray-600">₹{s.cashout}</td>
                       <td className={`py-2 px-4 border-b border-gray-600 ${s.netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        ${s.netProfit}
+                        ₹{s.netProfit}
                       </td>
                       <td className="py-2 px-4 border-b border-gray-600">{(s.winRate * 100).toFixed(2)}%</td>
                       <td className="py-2 px-4 border-b border-gray-600">{s.roundsPlayed}</td>
