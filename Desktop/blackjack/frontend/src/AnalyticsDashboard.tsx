@@ -5,11 +5,21 @@ import {
   BarChart, Bar, AreaChart, Area
 } from 'recharts';
 
-// Initial mock data is now an empty array
-const initialSessionData = [];
+
+
+interface SessionData {
+  id: number;
+  date: string;
+  session: string;
+  buyIn: number;
+  cashout: number;
+  netProfit: number;
+  winRate: number;
+  roundsPlayed: number;
+}
 
 function AnalyticsDashboard() {
-  const [sessionData, setSessionData] = useState(() => {
+  const [sessionData, setSessionData] = useState<SessionData[]>(() => {
     const savedData = localStorage.getItem('blackjackSessionData');
     return savedData ? JSON.parse(savedData) : [];
   });
@@ -41,7 +51,7 @@ function AnalyticsDashboard() {
   const handleDeleteSelected = () => {
     if (selectedSessions.length === 0) return;
     if (window.confirm(`Are you sure you want to delete ${selectedSessions.length} selected session(s)?`)) {
-      setSessionData(prevData => prevData.filter(session => !selectedSessions.includes(session.id)));
+      setSessionData((prevData: SessionData[]) => prevData.filter((session: SessionData) => !selectedSessions.includes(session.id)));
       setSelectedSessions([]);
     }
   };
@@ -57,7 +67,7 @@ function AnalyticsDashboard() {
     const netProfit = parseInt(cashout) - parseInt(buyIn);
     const winRate = parseInt(roundsWon) / parseInt(roundsPlayed);
 
-    setSessionData(prevData => [
+    setSessionData((prevData: SessionData[]) => [
       ...prevData,
       {
         id: Date.now(), // Unique ID for each session
@@ -214,7 +224,7 @@ function AnalyticsDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sessionData.map((s) => (
+                  {sessionData.map((s: SessionData) => (
                     <tr key={s.id}>
                       <td className="py-2 px-4 border-b border-gray-600 text-center">
                         <input
