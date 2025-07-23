@@ -418,7 +418,7 @@ function BlackjackAnalyzer() {
 
           <div className="bg-gray-800 p-4 rounded-md border border-gray-700">
             <h2 className="text-xl font-bold mb-4 text-yellow-400">Card Counts</h2>
-            <div className="grid grid-cols-7 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-7 gap-0">
               {Object.entries(cardCounts).map(([card, count]) => {
                 let cardColorClass = 'bg-gray-700';
                 if (['2', '3', '4', '5', '6'].includes(card)) {
@@ -429,8 +429,25 @@ function BlackjackAnalyzer() {
                   cardColorClass = 'bg-red-700'; // Negative cards
                 }
                 return (
-                  <div key={card} className={`rounded-lg p-2 flex items-center justify-center shadow-lg transition-shadow hover:shadow-xl ${cardColorClass}`}>
-                    <span className="text-lg font-bold text-white">{card}&nbsp;=&nbsp;{count}</span>
+                  <div key={card} className={`rounded-lg px-0 py-0 flex items-center justify-center shadow-lg transition-shadow hover:shadow-xl ${cardColorClass}`}>
+                    <span className="text-xs font-bold text-white">{card}&nbsp;=&nbsp;</span>
+                    <span className={`text-xs font-bold ${
+                      count === 0
+                        ? 'text-pink-500'
+                        : count === 1
+                        ? 'text-green-300'
+                        : count === 2
+                        ? 'text-green-400'
+                        : count === 3
+                        ? 'text-green-500'
+                        : count === 4
+                        ? 'text-green-600'
+                        : count === 5
+                        ? 'text-green-700'
+                        : count > 5
+                        ? 'text-red-500'
+                        : 'text-blue-400'
+                    }`}>{count}</span>
                   </div>
                 );
               })}

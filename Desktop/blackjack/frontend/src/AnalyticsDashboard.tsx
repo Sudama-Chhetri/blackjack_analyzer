@@ -86,26 +86,26 @@ function AnalyticsDashboard() {
         {/* Add New Session Form */}
         <div className="bg-gray-800 p-4 rounded-lg shadow-xl mb-6 border border-gray-700">
           <h2 className="text-2xl font-bold mb-4 text-indigo-400">Add New Session</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
+            <div className="min-w-0">
               <label htmlFor="sessionDate" className="block text-sm font-medium text-gray-300 mb-1">Date:</label>
-              <input type="date" id="sessionDate" value={newSession.date} onChange={(e) => setNewSession({...newSession, date: e.target.value})} className="w-full" />
+              <input type="date" id="sessionDate" value={newSession.date} onChange={(e) => setNewSession({...newSession, date: e.target.value})} className="bg-gray-700 p-1 rounded-md w-1/2" />
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="buyIn" className="block text-sm font-medium text-gray-300 mb-1">Buy-in (₹):</label>
-              <input type="number" id="buyIn" placeholder="e.g., 100" value={newSession.buyIn} onChange={(e) => setNewSession({...newSession, buyIn: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
+              <input type="number" id="buyIn" placeholder="e.g., 100" value={newSession.buyIn} onChange={(e) => setNewSession({...newSession, buyIn: e.target.value})} className="bg-gray-700 p-1 rounded-md w-1/2" />
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="cashout" className="block text-sm font-medium text-gray-300 mb-1">Cashout (₹):</label>
-              <input type="number" id="cashout" placeholder="e.g., 150" value={newSession.cashout} onChange={(e) => setNewSession({...newSession, cashout: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
+              <input type="number" id="cashout" placeholder="e.g., 150" value={newSession.cashout} onChange={(e) => setNewSession({...newSession, cashout: e.target.value})} className="bg-gray-700 p-1 rounded-md w-1/2" />
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="roundsPlayed" className="block text-sm font-medium text-gray-300 mb-1">Rounds Played:</label>
-              <input type="number" id="roundsPlayed" placeholder="e.g., 100" value={newSession.roundsPlayed} onChange={(e) => setNewSession({...newSession, roundsPlayed: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
+              <input type="number" id="roundsPlayed" placeholder="e.g., 100" value={newSession.roundsPlayed} onChange={(e) => setNewSession({...newSession, roundsPlayed: e.target.value})} className="bg-gray-700 p-1 rounded-md w-1/2" />
             </div>
-            <div>
+            <div className="min-w-0">
               <label htmlFor="roundsWon" className="block text-sm font-medium text-gray-300 mb-1">Rounds Won:</label>
-              <input type="number" id="roundsWon" placeholder="e.g., 55" value={newSession.roundsWon} onChange={(e) => setNewSession({...newSession, roundsWon: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
+              <input type="number" id="roundsWon" placeholder="e.g., 55" value={newSession.roundsWon} onChange={(e) => setNewSession({...newSession, roundsWon: e.target.value})} className="bg-gray-700 p-1 rounded-md w-1/2" />
             </div>
             <div className="flex items-end">
               <button onClick={handleAddSession} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">Add Session</button>
