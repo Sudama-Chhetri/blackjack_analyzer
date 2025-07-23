@@ -112,7 +112,7 @@ function BlackjackAnalyzer() {
   const [minBet, setMinBet] = useState(5); // Default minimum bet
   const [maxBet, setMaxBet] = useState(100); // Default maximum bet
 
-  const [showBasicStrategy, setShowBasicStrategy] = useState(true); // State for chart visibility
+  const [showBasicStrategy, setShowBasicStrategy] = useState(false); // State for chart visibility
 
   // Card values for dropdowns and manual input
   const cardValues = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
