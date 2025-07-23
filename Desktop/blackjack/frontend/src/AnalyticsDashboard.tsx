@@ -15,11 +15,36 @@ function AnalyticsDashboard() {
   });
   const [newSession, setNewSession] = useState({ date: '', buyIn: '', cashout: '', roundsPlayed: '', roundsWon: '' });
   const [isTableVisible, setIsTableVisible] = useState(true);
+  const [selectedSessions, setSelectedSessions] = useState<number[]>([]);
 
   // Save sessionData to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('blackjackSessionData', JSON.stringify(sessionData));
   }, [sessionData]);
+
+  const handleClearData = () => {
+    if (window.confirm('Are you sure you want to delete ALL session data? This action cannot be undone.')) {
+      setSessionData([]);
+      setSelectedSessions([]);
+      localStorage.removeItem('blackjackSessionData');
+    }
+  };
+
+  const handleSelectSession = (id: number) => {
+    setSelectedSessions(prevSelected =>
+      prevSelected.includes(id)
+        ? prevSelected.filter(sessionId => sessionId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleDeleteSelected = () => {
+    if (selectedSessions.length === 0) return;
+    if (window.confirm(`Are you sure you want to delete ${selectedSessions.length} selected session(s)?`)) {
+      setSessionData(prevData => prevData.filter(session => !selectedSessions.includes(session.id)));
+      setSelectedSessions([]);
+    }
+  };
 
   const handleAddSession = () => {
     const { date, buyIn, cashout, roundsPlayed, roundsWon } = newSession;
@@ -35,6 +60,7 @@ function AnalyticsDashboard() {
     setSessionData(prevData => [
       ...prevData,
       {
+        id: Date.now(), // Unique ID for each session
         date,
         session: `Session ${prevData.length + 1}`,
         buyIn: parseInt(buyIn),
@@ -63,7 +89,7 @@ function AnalyticsDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label htmlFor="sessionDate" className="block text-sm font-medium text-gray-300 mb-1">Date:</label>
-              <input type="date" id="sessionDate" value={newSession.date} onChange={(e) => setNewSession({...newSession, date: e.target.value})} className="bg-gray-700 p-2 rounded-md w-full" />
+              <input type="date" id="sessionDate" value={newSession.date} onChange={(e) => setNewSession({...newSession, date: e.target.value})} className="w-full" />
             </div>
             <div>
               <label htmlFor="buyIn" className="block text-sm font-medium text-gray-300 mb-1">Buy-in (₹):</label>
@@ -95,15 +121,15 @@ function AnalyticsDashboard() {
               <AreaChart data={sessionData}>
                 <defs>
                   <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2E7D32" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#2E7D32" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#006400" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#006400" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="session" stroke="#E2E8F0" />
-                <YAxis stroke="#E2E8F0" />
+                <YAxis stroke="#CBD5E0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
-                <Area type="monotone" dataKey="netProfit" stroke="#2E7D32" fillOpacity={1} fill="url(#colorProfit)" />
+                <Area type="monotone" dataKey="netProfit" stroke="#006400" fillOpacity={1} fill="url(#colorProfit)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -114,11 +140,11 @@ function AnalyticsDashboard() {
               <BarChart data={sessionData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="session" stroke="#E2E8F0" />
-                <YAxis stroke="#E2E8F0" />
+                <YAxis stroke="#CBD5E0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Bar dataKey="buyIn" fill="#1565C0" name="Buy-in" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="cashout" fill="#FF8F00" name="Cashout" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="buyIn" fill="#191970" name="Buy-in" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="cashout" fill="#CC5500" name="Cashout" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -132,7 +158,7 @@ function AnalyticsDashboard() {
                 <YAxis domain={[0, 1]} stroke="#E2E8F0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Line type="monotone" dataKey="winRate" stroke="#D84315" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="winRate" stroke="#8B0000" strokeWidth={3} dot={{ r: 5 }} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -143,10 +169,10 @@ function AnalyticsDashboard() {
               <BarChart data={sessionData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />
                 <XAxis dataKey="session" stroke="#E2E8F0" />
-                <YAxis stroke="#E2E8F0" />
+                <YAxis stroke="#CBD5E0" />
                 <Tooltip contentStyle={{ backgroundColor: '#2D3748', border: '1px solid #4A5568' }} />
                 <Legend />
-                <Bar dataKey="roundsPlayed" fill="#6A1B9A" name="Rounds Played" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="roundsPlayed" fill="#4B0082" name="Rounds Played" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -156,15 +182,28 @@ function AnalyticsDashboard() {
         <div className="bg-gray-800 p-4 rounded-lg shadow-xl mt-6 border border-gray-700">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-indigo-400">Session Data</h2>
-            <button onClick={() => setIsTableVisible(!isTableVisible)} className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
-              {isTableVisible ? 'Hide' : 'Show'}
-            </button>
+            <div className="flex space-x-2">
+              <button onClick={() => setIsTableVisible(!isTableVisible)} className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                {isTableVisible ? 'Hide' : 'Show'}
+              </button>
+              <button
+                onClick={handleDeleteSelected}
+                className={`bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ${selectedSessions.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={selectedSessions.length === 0}
+              >
+                Delete Selected ({selectedSessions.length})
+              </button>
+              <button onClick={handleClearData} className="bg-red-800 hover:bg-red-900 text-white font-bold py-2 px-4 rounded">
+                Clear All Data
+              </button>
+            </div>
           </div>
           {isTableVisible && (
             <div className="overflow-x-auto">
               <table className="min-w-full bg-gray-700 rounded-md">
                 <thead>
                   <tr>
+                    <th className="py-2 px-4 border-b border-gray-600">Select</th>
                     <th className="py-2 px-4 border-b border-gray-600">Date</th>
                     <th className="py-2 px-4 border-b border-gray-600">Session</th>
                     <th className="py-2 px-4 border-b border-gray-600">Buy-in</th>
@@ -175,8 +214,16 @@ function AnalyticsDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sessionData.map((s, index) => (
-                    <tr key={index}>
+                  {sessionData.map((s) => (
+                    <tr key={s.id}>
+                      <td className="py-2 px-4 border-b border-gray-600 text-center">
+                        <input
+                          type="checkbox"
+                          checked={selectedSessions.includes(s.id)}
+                          onChange={() => handleSelectSession(s.id)}
+                          className="form-checkbox h-5 w-5 text-blue-600"
+                        />
+                      </td>
                       <td className="py-2 px-4 border-b border-gray-600">{s.date}</td>
                       <td className="py-2 px-4 border-b border-gray-600">{s.session}</td>
                       <td className="py-2 px-4 border-b border-gray-600">₹{s.buyIn}</td>
